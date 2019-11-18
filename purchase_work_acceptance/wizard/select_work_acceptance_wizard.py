@@ -29,7 +29,7 @@ class SelectWorkAcceptanceWizard(models.TransientModel):
         order = self.env['purchase.order'].browse(self._context.get('active_id'))
         if any(invoice.wa_id == self.wa_id for invoice in order.invoice_ids):
             raise ValidationError(_('%s was used in some bill.') % self.wa_id.name)
-        action = self.env.ref('account.action_vendor_bill_template')
+        action = self.env.ref('account.action_invoice_tree2')
         result = action.read()[0]
         result['context'] = {
             'type': 'in_invoice',

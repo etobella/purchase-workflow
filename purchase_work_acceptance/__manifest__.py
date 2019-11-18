@@ -3,14 +3,14 @@
 
 {
     'name': 'Purchase Work Acceptance',
-    'version': '12.0.1.0.0',
+    'version': '11.0.1.0.0',
     'category': 'Purchase Management',
     'author': 'Ecosoft, '
               'Odoo Community Association (OCA)',
     'license': 'AGPL-3',
     'website': 'https://github.com/OCA/purchase-workflow',
     'depends': [
-        'purchase_stock',
+        'purchase',
     ],
     'data': [
         'data/work_acceptance_sequence.xml',

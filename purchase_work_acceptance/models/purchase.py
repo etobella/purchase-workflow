@@ -94,3 +94,20 @@ class PurchaseOrderLine(models.Model):
         return self.product_qty - sum(
             wa_line.product_qty for wa_line in self.wa_line_ids
             if wa_line.wa_id.state != 'cancel')
+
+    @api.depends(
+        'order_id.state', 'move_ids.state', 'move_ids.product_uom_qty',
+        'wa_line_ids', 'wa_line_ids.wa_id.state', 'wa_line_ids.product_qty',
+    )
+    def _compute_qty_received(self):
+        super()._compute_qty_received()
+        for record in self.filtered(
+            lambda r: r.product_id.type not in [
+                'consu', 'product'
+            ] and r.wa_line_ids and r.order_id.state in [
+                'purchase', 'done']
+        ):
+            record.qty_received = sum(
+                wal.product_qty for wal in record.wa_line_ids
+                if wal.wa_id.state == 'accept'
+            )

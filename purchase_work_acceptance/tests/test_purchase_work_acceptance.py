@@ -3,7 +3,7 @@
 
 from odoo import fields
 from odoo.exceptions import ValidationError
-from odoo.tests.common import TransactionCase, Form
+from odoo.tests.common import TransactionCase
 
 
 class TestPurchaseWorkAcceptance(TransactionCase):
@@ -57,7 +57,8 @@ class TestPurchaseWorkAcceptance(TransactionCase):
 
         res = purchase_order.with_context(create_wa=True).action_view_wa()
         ctx = res.get('context')
-        work_acceptance = Form(self.env['work.acceptance'].with_context(ctx))
+        work_acceptance = self.env['work.acceptance'].with_context(
+            ctx).create({})
         self.assertEqual(work_acceptance.state, 'draft')
 
     def test_02_flow_product(self):
@@ -96,14 +97,14 @@ class TestPurchaseWorkAcceptance(TransactionCase):
         self.assertEqual(purchase_order.wa_count, 1)
         # Received Products
         picking = purchase_order.picking_ids[0]
-        self.assertEqual(len(picking.move_ids_without_package), 1)
+        self.assertEqual(len(picking.move_lines), 1)
         picking.wa_id = work_acceptance
         picking._onchange_wa_id()
 
         with self.assertRaises(ValidationError):
-            picking.move_ids_without_package[0].quantity_done = 30.0
+            picking.move_lines[0].quantity_done = 30.0
             picking.button_validate()
-        picking.move_ids_without_package[0].quantity_done = 42.0
+        picking.move_lines[0].quantity_done = 42.0
         picking.button_validate()
         # Create Vendor Bill
         invoice = self.env['account.invoice'].create({

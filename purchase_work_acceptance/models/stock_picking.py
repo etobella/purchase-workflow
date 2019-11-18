@@ -39,7 +39,7 @@ class Picking(models.Model):
                     else:
                         wa_line[line.product_id.id] = qty
             move_line = {}
-            for move in self.move_ids_without_package:
+            for move in self.move_lines:
                 qty = move.product_uom._compute_quantity(
                     move.quantity_done, line.product_id.uom_id)
                 if qty > 0.0:
@@ -65,7 +65,7 @@ class Picking(models.Model):
                     wa_line[line.product_id.id] = qty_old + qty
                 else:
                     wa_line[line.product_id.id] = qty
-            for move in self.move_ids_without_package:
+            for move in self.move_lines:
                 if move.product_id.id in wa_line.keys():
                     qty = wa_line[move.product_id.id]
                     if move.product_uom_qty < qty:
